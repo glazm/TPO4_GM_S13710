@@ -16,6 +16,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 public class Server {
+    private static Map<String,String> clients = new HashMap<String,String>();
     private static List<String> topics = new ArrayList<>();
     public static void main(String[] args) throws IOException {
         new Server();
@@ -130,7 +131,7 @@ public class Server {
 
             System.out.println(selectionKey);
 
-            if(jsonObject.containsKey("msg")) {
+            if(jsonObject.containsKey("msg")) { ///also use for (un)subscribe respone
                 if(jsonObject.get("msg").equals("getTopics")) {
                     String topicsJson = "{\"topics\":[";
                     int i = 0;
@@ -147,7 +148,57 @@ public class Server {
                     System.out.println(topicsJson);
                     socketChannel.write(charset.encode(topicsJson));
                 }
-//                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
+                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
+            }
+            if(jsonObject.containsKey("subscribe")){
+                String subTopic = jsonObject.get("subscribe").toString();
+                String objects ="";
+                if(clients.containsKey(subTopic)) {
+                    objects = clients.get(subTopic);
+                    objects = objects.replaceAll("]","");
+                    objects = objects.concat(",\""+selectionKey.toString()+"\"]");
+                    clients.put(subTopic, objects);
+                }else{
+                    clients.put(subTopic,"[\""+selectionKey.toString()+"\"]");
+                }
+
+                clients.forEach(
+                        (key, value) -> {
+                            System.out.println(key+" clients: "+value);
+                        }
+            );
+                socketChannel.write(charset.encode("{\"sub\":\""+subTopic+"\"}"));
+            }
+            if(jsonObject.containsKey("unsubscribe")){
+                String unsubTopic = jsonObject.get("unsubscribe").toString();
+                String objects ="";
+                if(clients.containsKey(unsubTopic)) {
+                    objects = clients.get(unsubTopic);
+                    objects = objects.replaceAll("\""+selectionKey+"\"","");//in future also replace "," with "" if it's not last element
+                    clients.put(unsubTopic, objects);
+                }else{
+                    clients.put(unsubTopic,"[\""+selectionKey.toString()+"\"],");
+                    objects = clients.get(unsubTopic);
+                    objects = objects.concat("[\"TEST\"]");
+                    clients.put(unsubTopic,objects);
+                    clients.forEach(
+                            (key, value) -> {
+                                System.out.println(key+" clients: "+value);
+                            }
+                    );
+
+                    objects = clients.get(unsubTopic);
+                    objects = objects.replaceAll("\""+selectionKey+"\"","");
+                    clients.put(unsubTopic, objects);
+                    System.out.println("Nie ma takiego tematu");
+                }
+
+                clients.forEach(
+                        (key, value) -> {
+                            System.out.println(key+" clients: "+value);
+                        }
+                );
+                socketChannel.write(charset.encode("{\"unsub\":\""+unsubTopic+"\"}"));
             }
 
         }catch (IOException | ParseException e) {

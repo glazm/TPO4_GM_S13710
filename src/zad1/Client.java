@@ -16,6 +16,7 @@ import java.util.Iterator;
 public class Client {
     public static void main(String[] args) throws IOException, ParseException {
         String topics = "";
+        //When Gui is ready add subscribed topics list, changes with responses from server
         SocketChannel socketChannel = null;
         String server = "localhost";
         int serverPort = 50000;
@@ -75,6 +76,9 @@ public class Client {
                         System.out.println("Brak tematów");
                     }
                 }
+                if(jsonObject.containsKey("sub")){
+
+                }
 
                 System.out.println("Server: "+serverResponse);
                 charBuffer.clear();
@@ -83,11 +87,22 @@ public class Client {
             if(i ==0) {
                 System.out.println("stało się");
                 i++;
-                socketChannel.write(charset.encode("{\"msg\":\"hi2\"}\n"));
+//                socketChannel.write(charset.encode("{\"msg\":\"hi2\"}\n"));
+                subscribeToTopic("Muzyka",socketChannel, charset);
+//                subscribeToTopic("Sport",socketChannel, charset);
+//                unsubscribeToTopic("Plotki",socketChannel, charset);
             }
 
         }
 
+    }
+    public static void subscribeToTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
+        String topicJson = "{\"subscribe\":\"" + topic + "\"}\n";
+        socketChannel.write(charset.encode(topicJson));
+    }
+    public static void unsubscribeToTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
+        String topicJson = "{\"unsubscribe\":\"" + topic + "\"}\n";
+        socketChannel.write(charset.encode(topicJson));
     }
 
 }
