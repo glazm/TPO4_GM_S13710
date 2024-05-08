@@ -31,14 +31,14 @@ public class Publisher {
         CharBuffer charBuffer = null;
 
 //        socketChannel.write(charset.encode("Cześć jestem Adminem\n"));
-        addTopic("Polityka",socketChannel, charset);
+        addTopic("Muzyka",socketChannel, charset);
     }
     public static void addTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
-        String topicJson = "{\"topic\":\""+topic+"\"}\n";
+        String topicJson = "{\"addTopic\":\""+topic+"\"}\n";
         socketChannel.write(charset.encode(topicJson));
     }
     public static void removeTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
-        String topicJson = "{\"topic\":\""+topic+"\"}\n";
+        String topicJson = "{\"removeTopic\":\""+topic+"\"}\n";
         socketChannel.write(charset.encode(topicJson));
     }
 }

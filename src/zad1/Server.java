@@ -1,5 +1,9 @@
 package zad1;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -9,10 +13,10 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class Server {
+    private static List<String> topics = new ArrayList<>();
     public static void main(String[] args) throws IOException {
         new Server();
     }
@@ -98,12 +102,27 @@ public class Server {
             String request = stringBuffer.toString();
             System.out.println(request);
 
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(request);
+            if(jsonObject.containsKey("addTopic")){
+                String topic =(String) jsonObject.get("addTopic");
+//                System.out.println(topic);
+                topics.add(topic);
+            }
+            else if (jsonObject.containsKey("removeTopic")){
+                String topic =(String) jsonObject.get("removeTopic");
+//                System.out.println(topic);
+                topics.remove(topic);
+            }
+            for(String topic : topics){
+                System.out.println(topic);
+            }
 
 //            socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
             socketChannel.close();
             socketChannel.socket().close();
 
-        }catch (IOException e) {
+        }catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
