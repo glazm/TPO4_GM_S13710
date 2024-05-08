@@ -131,7 +131,23 @@ public class Server {
             System.out.println(selectionKey);
 
             if(jsonObject.containsKey("msg")) {
-                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
+                if(jsonObject.get("msg").equals("getTopics")) {
+                    String topicsJson = "{\"topics\":[";
+                    int i = 0;
+                    int size = topics.size();
+                    for(String topic:topics){
+                        i++;
+                        if(size!=i) {
+                            topicsJson = topicsJson.concat("\"" + topic + "\",");
+                        }else{
+                            topicsJson = topicsJson.concat("\"" + topic + "\"");
+                        }
+                    }
+                    topicsJson = topicsJson.concat("]}");
+                    System.out.println(topicsJson);
+                    socketChannel.write(charset.encode(topicsJson));
+                }
+//                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
             }
 
         }catch (IOException | ParseException e) {
