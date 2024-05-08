@@ -13,12 +13,12 @@ public class Publisher {
         String server = "localhost";
         int serverPort = 50000;
 
-        try{
+        try {
             socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
             socketChannel.connect(new InetSocketAddress(server, serverPort));
 
-            while(!socketChannel.finishConnect()){
+            while (!socketChannel.finishConnect()) {
 
             }
         } catch (IOException e) {
@@ -31,14 +31,24 @@ public class Publisher {
         CharBuffer charBuffer = null;
 
 //        socketChannel.write(charset.encode("Cześć jestem Adminem\n"));
-        addTopic("Muzyka",socketChannel, charset);
+//        addTopic("Sport", socketChannel, charset);
+//        Polityka Sport Plotki Muzyka
+//        removeTopic("Muzyka", socketChannel, charset);
+        topicNews("Muzyka","Koncert zepsołu w Warszawie", socketChannel, charset);
     }
+
     public static void addTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
-        String topicJson = "{\"addTopic\":\""+topic+"\"}\n";
+        String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
         socketChannel.write(charset.encode(topicJson));
     }
+
     public static void removeTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
-        String topicJson = "{\"removeTopic\":\""+topic+"\"}\n";
+        String topicJson = "{\"removeTopic\":\"" + topic + "\"}\n";
         socketChannel.write(charset.encode(topicJson));
+    }
+
+    public static void topicNews(String topic, String news, SocketChannel socketChannel, Charset charset) throws IOException {
+        String newsJson = "{\"topicNews\":\"" + topic + "\",\"news\":\""+news+"\"}\n";
+        socketChannel.write(charset.encode(newsJson));
     }
 }

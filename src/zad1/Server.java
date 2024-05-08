@@ -113,6 +113,10 @@ public class Server {
                 String topic =(String) jsonObject.get("removeTopic");
 //                System.out.println(topic);
                 topics.remove(topic);
+            } else if(jsonObject.containsKey("topicNews")){
+                String news =(String) jsonObject.get("news");
+                String topic = (String) jsonObject.get("topicNews");
+                System.out.println("Wiadomości dotyczące "+topic+": "+ news);
             }
             for(String topic : topics){
                 System.out.println(topic);
