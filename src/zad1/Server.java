@@ -55,7 +55,7 @@ public class Server {
                 if(selectionKey.isReadable()){
                     SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-                    readRequest(socketChannel);
+                    readRequest(socketChannel, selectionKey);
 
                     continue;
                 }
@@ -73,7 +73,7 @@ public class Server {
     private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
     private StringBuffer stringBuffer = new StringBuffer();
 
-    public void readRequest(SocketChannel socketChannel) throws IOException {
+    public void readRequest(SocketChannel socketChannel, SelectionKey selectionKey) throws IOException {
         if(!socketChannel.isOpen()){return;}
 
         stringBuffer.setLength(0);
@@ -108,26 +108,35 @@ public class Server {
                 String topic =(String) jsonObject.get("addTopic");
 //                System.out.println(topic);
                 topics.add(topic);
+                socketChannel.close();
+                socketChannel.socket().close();
             }
             else if (jsonObject.containsKey("removeTopic")){
                 String topic =(String) jsonObject.get("removeTopic");
 //                System.out.println(topic);
                 topics.remove(topic);
+                socketChannel.close();
+                socketChannel.socket().close();
             } else if(jsonObject.containsKey("topicNews")){
                 String news =(String) jsonObject.get("news");
                 String topic = (String) jsonObject.get("topicNews");
                 System.out.println("Wiadomości dotyczące "+topic+": "+ news);
+                socketChannel.close();
+                socketChannel.socket().close();
             }
             for(String topic : topics){
                 System.out.println(topic);
             }
 
-//            socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
-            socketChannel.close();
-            socketChannel.socket().close();
+            System.out.println(selectionKey);
+
+            if(jsonObject.containsKey("msg")) {
+                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
+            }
 
         }catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
+
 }

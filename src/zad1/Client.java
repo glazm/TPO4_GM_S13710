@@ -30,6 +30,34 @@ public class Client {
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         CharBuffer charBuffer = null;
 
-        socketChannel.write(charset.encode("Cześć\n"));
+        socketChannel.write(charset.encode("{\"msg\":\"hi\"}\n"));
+
+        int i =0;
+
+        while(true){
+            byteBuffer.clear();
+            int readBytes = socketChannel.read(byteBuffer);
+
+            if(readBytes == 0){continue;}
+            else if(readBytes == -1){break;}
+            else {
+                byteBuffer.flip();
+
+                charBuffer = charset.decode(byteBuffer);
+                String serverResponse = charBuffer.toString();
+
+                System.out.println("Server: "+serverResponse);
+                charBuffer.clear();
+
+            }
+            if(i ==0) {
+                System.out.println("stało się");
+                i++;
+                socketChannel.write(charset.encode("{\"msg\":\"hi2\"}\n"));
+            }
+
+        }
+
     }
+
 }
