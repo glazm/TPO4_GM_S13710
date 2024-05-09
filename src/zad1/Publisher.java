@@ -6,10 +6,20 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Publisher {
+    private static List<String> topics = new ArrayList<>();
+    private static SocketChannel socketChannel = null;
+    private static Charset charset = Charset.forName("UTF-8");
+    public Publisher(){
+        new PublisherGui(this);
+    }
     public static void main(String[] args) throws IOException {
-        SocketChannel socketChannel = null;
+        new Publisher();
+
+//        SocketChannel socketChannel = null;
         String server = "localhost";
         int serverPort = 50000;
 
@@ -26,26 +36,52 @@ public class Publisher {
         }
         System.out.println("Połączono");
 
-        Charset charset = Charset.forName("UTF-8");
+//        Charset charset = Charset.forName("UTF-8");
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         CharBuffer charBuffer = null;
 
+//        do {
 //        socketChannel.write(charset.encode("Cześć jestem Adminem\n"));
-//        addTopic("Sport", socketChannel, charset);
+//            addTopic("Sport");
+//            addTopic("Sport", socketChannel, charset);
 //        Polityka Sport Plotki Muzyka
 //        removeTopic("Muzyka", socketChannel, charset);
-        topicNews("Muzyka","Koncert zepsołu w Warszawie", socketChannel, charset);
+//        topicNews("Muzyka","Koncert zepsołu w Warszawie", socketChannel, charset);
+//        }while(true);
     }
 
-    public static void addTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
-        String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
-        socketChannel.write(charset.encode(topicJson));
+    public void closingPublisher(){
+        try {
+            socketChannel.close();
+            socketChannel.socket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public List<String> getTopics(){
+        return topics;
+    }
+    public void addTopic(String topic) throws IOException {
+        if(topics.contains(topic)){
+            System.out.println("Taki temat już istnieje");
+        }else {
+            topics.add(topic);
+            String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
+//            System.out.println(topicJson);
+            socketChannel.write(charset.encode(topicJson));
+        }
     }
 
-    public static void removeTopic(String topic, SocketChannel socketChannel, Charset charset) throws IOException {
+    public void removeTopic(String topic) throws IOException {
         String topicJson = "{\"removeTopic\":\"" + topic + "\"}\n";
         socketChannel.write(charset.encode(topicJson));
     }
+    public void removeAllTopics() throws IOException {
+        String topicJson = "{\"removeAllTopics\":\"true\"}\n";
+        socketChannel.write(charset.encode(topicJson));
+    }
+
 
     public static void topicNews(String topic, String news, SocketChannel socketChannel, Charset charset) throws IOException {
         String newsJson = "{\"topicNews\":\"" + topic + "\",\"news\":\""+news+"\"}\n";

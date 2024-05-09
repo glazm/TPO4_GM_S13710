@@ -76,9 +76,9 @@ public class Client {
                         System.out.println("Brak tematów");
                     }
                 }
-                if(jsonObject.containsKey("sub")){
-
-                }
+//                if(jsonObject.containsKey("sub")){
+//
+//                }
 
                 System.out.println("Server: "+serverResponse);
                 charBuffer.clear();
