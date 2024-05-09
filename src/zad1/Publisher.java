@@ -1,5 +1,6 @@
 package zad1;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -14,7 +15,7 @@ public class Publisher {
     private static SocketChannel socketChannel = null;
     private static Charset charset = Charset.forName("UTF-8");
     public Publisher(){
-        new PublisherGui(this);
+       new PublisherGui(this);
     }
     public static void main(String[] args) throws IOException {
         new Publisher();
@@ -62,18 +63,22 @@ public class Publisher {
     public List<String> getTopics(){
         return topics;
     }
-    public void addTopic(String topic) throws IOException {
+    public boolean addTopic(String topic) throws IOException {
         if(topics.contains(topic)){
             System.out.println("Taki temat już istnieje");
+            return false;
         }else {
             topics.add(topic);
             String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
 //            System.out.println(topicJson);
             socketChannel.write(charset.encode(topicJson));
+            return true;
+
         }
     }
 
     public void removeTopic(String topic) throws IOException {
+        topics.remove(topic);
         String topicJson = "{\"removeTopic\":\"" + topic + "\"}\n";
         socketChannel.write(charset.encode(topicJson));
     }
