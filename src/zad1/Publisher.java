@@ -88,7 +88,7 @@ public class Publisher {
     }
 
 
-    public static void topicNews(String topic, String news, SocketChannel socketChannel, Charset charset) throws IOException {
+    public void topicNews(String topic, String news) throws IOException {
         String newsJson = "{\"topicNews\":\"" + topic + "\",\"news\":\""+news+"\"}\n";
         socketChannel.write(charset.encode(newsJson));
     }

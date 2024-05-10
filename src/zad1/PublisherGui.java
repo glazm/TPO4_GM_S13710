@@ -22,6 +22,7 @@ public class PublisherGui extends JFrame{
 
         JPanel addTopicPanel = new JPanel();
         addTopicPanel.setLayout(new GridBagLayout());
+//        addTopicPanel.setBorder(BorderFactory.createTitledBorder("Dodaj temat"));
         GridBagConstraints addConstraints = new GridBagConstraints();
 
         JTextField topic = new JTextField();
@@ -43,6 +44,7 @@ public class PublisherGui extends JFrame{
 
         JPanel removeTopicPanel = new JPanel();
         removeTopicPanel.setLayout(new GridBagLayout());
+//        removeTopicPanel.setBorder(BorderFactory.createTitledBorder("Usuń temat"));
         GridBagConstraints removeConstraints = new GridBagConstraints();
 
         JComboBox<String> topicList = new JComboBox();
@@ -60,6 +62,36 @@ public class PublisherGui extends JFrame{
         constraints.gridy = 1;
 
         mainPanel.add(removeTopicPanel,constraints);
+
+        JPanel newsPanel = new JPanel();
+        newsPanel.setLayout(new GridBagLayout());
+//        newsPanel.setBorder(BorderFactory.createTitledBorder("News"));
+//        GridBagConstraints newsConstraints = new GridBagConstraints();
+
+        JTextArea newsText = new JTextArea(10,10);
+        newsText.setLineWrap(true);
+        newsText.setWrapStyleWord(true);
+//        newsText.setPreferredSize(new Dimension(400,400));
+//        newsText.setMinimumSize(new Dimension(400, 400));
+//        newsText.setBounds(0, 0, 400, 400);
+//        newsConstraints.gridy = 0;
+
+        newsPanel.add(new JScrollPane(newsText));
+
+        JButton newsButton = new JButton("News");
+//        newsConstraints.gridy = 1;
+
+        newsPanel.add(newsButton);
+
+        constraints.gridy = 2;
+        mainPanel.add(newsPanel,constraints);
+
+        JLabel info = new JLabel("Tymczasowy tekst");
+//        info.setBorder(BorderFactory.createTitledBorder("Info"));
+        constraints.gridy = 3;
+        mainPanel.add(info,constraints);
+
+
 //        JTextField topic = new JTextField();
 //        constraints.fill = GridBagConstraints.HORIZONTAL;
 //        constraints.weightx = 0.5;
@@ -104,6 +136,24 @@ public class PublisherGui extends JFrame{
                         ));
                     } catch (IOException ex) {
                         ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        newsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!newsText.getText().isEmpty()) {
+                    if(topicList.getSelectedItem()!=null) {
+                        System.out.println(topicList.getSelectedItem().toString()
+                                +": "+newsText.getText());
+                        try {
+                            publisher.topicNews(topicList.getSelectedItem().toString()
+                                    ,newsText.getText());
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
