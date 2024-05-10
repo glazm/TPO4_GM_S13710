@@ -88,9 +88,9 @@ public class Client {
                 System.out.println("stało się");
                 i++;
 //                socketChannel.write(charset.encode("{\"msg\":\"hi2\"}\n"));
-                subscribeToTopic("Muzyka",socketChannel, charset);
+                subscribeToTopic("Sport",socketChannel, charset);
 //                subscribeToTopic("Sport",socketChannel, charset);
-//                unsubscribeToTopic("Plotki",socketChannel, charset);
+                unsubscribeToTopic("Sport",socketChannel, charset);
             }
 
         }

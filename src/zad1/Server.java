@@ -65,6 +65,18 @@ public class Server {
                     continue;
                 }
                 if(selectionKey.isWritable()){
+//                    if(clientsKeys.containsValue(selectionKey)){
+                    /////////////////////////////COS DZIALA
+//                    if(!clientsKeys.isEmpty()) {
+//                        clientsKeys.forEach(
+//                                (key, value) -> {
+//                                    System.out.println("Prawda: " +value+" lub "+selectionKey);
+//                                }
+//                        );
+//                    }
+////                    }
+//                    selectionKey.interestOps(SelectionKey.OP_READ);
+                    /////////////////////////////////COS DZIALA
 //                    publishNews(selectionKey);
 //                    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 //
@@ -320,38 +332,69 @@ public class Server {
             if(jsonObject.containsKey("unsubscribe")){
                 String unsubTopic = jsonObject.get("unsubscribe").toString();
                 String objects ="";
-                if(clients.containsKey(unsubTopic)) {
-                    objects = clients.get(unsubTopic);
-                    objects = objects.replaceAll("\""+selectionKey+"\"","");//in future also replace "," with "" if it's not last element
-                    clients.put(unsubTopic, objects);
-                }else{
-                    clients.put(unsubTopic,"[\""+selectionKey.toString()+"\"],");
-                    objects = clients.get(unsubTopic);
-                    objects = objects.concat("[\"TEST\"]");
-                    clients.put(unsubTopic,objects);
-                    clients.forEach(
-                            (key, value) -> {
-                                System.out.println(key+" clients: "+value);
-                            }
-                    );
+//                if(clients.containsKey(unsubTopic)) {
+//                    objects = clients.get(unsubTopic);
+//                    objects = objects.replaceAll("\""+selectionKey+"\"","");//in future also replace "," with "" if it's not last element
+//                    clients.put(unsubTopic, objects);
+//                }else{
+//                    clients.put(unsubTopic,"[\""+selectionKey.toString()+"\"],");
+//                    objects = clients.get(unsubTopic);
+//                    objects = objects.concat("[\"TEST\"]");
+//                    clients.put(unsubTopic,objects);
+//                    clients.forEach(
+//                            (key, value) -> {
+//                                System.out.println(key+" clients: "+value);
+//                            }
+//                    );
+//
+//                    objects = clients.get(unsubTopic);
+//                    objects = objects.replaceAll("\""+selectionKey+"\"","");
+//                    clients.put(unsubTopic, objects);
+//                    System.out.println("Nie ma takiego tematu");
+//                }
+//
+//                clients.forEach(
+//                        (key, value) -> {
+//                            System.out.println(key+" clients: "+value);
+//                        }
+//                );
 
-                    objects = clients.get(unsubTopic);
-                    objects = objects.replaceAll("\""+selectionKey+"\"","");
-                    clients.put(unsubTopic, objects);
-                    System.out.println("Nie ma takiego tematu");
+                /////////////////////////Testy
+                String obj ="";
+                List<SelectionKey> list = new ArrayList<>();
+                if(clientsKeys.containsKey(unsubTopic)) {
+//                    clientsKeys.forEach(
+//                            (key, value) -> {
+//                                System.out.println(key+" clients: "+value);
+//                            }
+//                    );
+                    list =clientsKeys.get(unsubTopic);
+                    list.remove(selectionKey);
+                    clientsKeys.put(unsubTopic, list);
+//                    System.out.println("Jestem");
                 }
 
-                clients.forEach(
+                clientsKeys.forEach(
                         (key, value) -> {
-                            System.out.println(key+" clients: "+value);
+//                            System.out.println(key+" clients: "+value);
+//                            JSONArray msg = (JSONArray) jsonObject.get(key);
+//                            Iterator<String> iterator = msg.iterator();
+//                            while (iterator.hasNext()) {
+                            for(SelectionKey sk : value){
+                                System.out.println(key+" clients SelectionKey: " +sk);
+                            }
+//                            }
+
                         }
                 );
+                /////////////////////////Testy
                 socketChannel.write(charset.encode("{\"unsub\":\""+unsubTopic+"\"}"));
             }
 
         }catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+//        selectionKey.interestOps(SelectionKey.OP_WRITE);
     }
 
 }
