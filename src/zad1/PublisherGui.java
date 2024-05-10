@@ -14,7 +14,7 @@ public class PublisherGui extends JFrame{
     public PublisherGui(Publisher publisher){
         this.publisher = publisher;
         new JFrame("Publisher");
-
+        this.setTitle("Publisher");
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());

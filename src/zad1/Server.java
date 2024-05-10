@@ -20,6 +20,7 @@ public class Server {
     private static Map<String,String> clients = new HashMap<String,String>();
     private static Map<String,List<SelectionKey>> clientsKeys = new HashMap<String,List<SelectionKey>>();
     private static List<String> topics = new ArrayList<>();
+    private static List<SelectionKey> allClientKeys = new ArrayList<>();
     private static Map<String,String> topicsNews = new HashMap<>();
     public static void main(String[] args) throws IOException {
         new Server();
@@ -162,7 +163,7 @@ public class Server {
 
     public void readRequest(SocketChannel socketChannel, SelectionKey selectionKey) throws IOException {
         if(!socketChannel.isOpen()){return;}
-
+            System.out.println("To jest nowe czytanie: "+selectionKey);
         stringBuffer.setLength(0);
         byteBuffer.clear();
 
@@ -195,6 +196,29 @@ public class Server {
                 String topic =(String) jsonObject.get("addTopic");
 //                System.out.println(topic);
                 topics.add(topic);
+
+                /////////////////////////////////
+                //Dodawać do nowej listy przy każdym nowym łączeniu selectionKey clientów
+                String topicsJson = "{\"topics\":[";
+                int i = 0;
+                int size = topics.size();
+                for(String topicPublished:topics){
+                    i++;
+                    if(size!=i) {
+                        topicsJson = topicsJson.concat("\"" + topicPublished + "\",");
+                    }else{
+                        topicsJson = topicsJson.concat("\"" + topicPublished + "\"");
+                    }
+                }
+                topicsJson = topicsJson.concat("]}");
+                System.out.println(topicsJson);
+                if(!allClientKeys.isEmpty()) {
+                    for (SelectionKey sk : allClientKeys) {
+                        SocketChannel sc = (SocketChannel) sk.channel();
+                        sc.write(charset.encode(topicsJson));
+                    }
+                }
+                ///////////////////////////////////
 //                socketChannel.close();
 //                socketChannel.socket().close();
             }
@@ -202,7 +226,30 @@ public class Server {
                 String topic =(String) jsonObject.get("removeTopic");
 //                System.out.println(topic);
                 topics.remove(topic);
+                clientsKeys.remove(topic);
                 System.out.println("Usunięto temat: "+topic);
+                /////////////////////////////////
+                //Dodawać do nowej listy przy każdym nowym łączeniu selectionKey clientów
+                String topicsJson = "{\"topics\":[";
+                int i = 0;
+                int size = topics.size();
+                for(String topicPublished:topics){
+                    i++;
+                    if(size!=i) {
+                        topicsJson = topicsJson.concat("\"" + topicPublished + "\",");
+                    }else{
+                        topicsJson = topicsJson.concat("\"" + topicPublished + "\"");
+                    }
+                }
+                topicsJson = topicsJson.concat("]}");
+                System.out.println(topicsJson);
+                if(!allClientKeys.isEmpty()) {
+                    for (SelectionKey sk : allClientKeys) {
+                        SocketChannel sc = (SocketChannel) sk.channel();
+                        sc.write(charset.encode(topicsJson));
+                    }
+                }
+                ///////////////////////////////////
 //                socketChannel.close();
 //                socketChannel.socket().close();
             }
@@ -212,6 +259,27 @@ public class Server {
                     System.out.println("Tematy: " + topics);
                     socketChannel.close();
                     socketChannel.socket().close();
+                }
+            }
+            else if(jsonObject.containsKey("bye")){
+                if(jsonObject.get("bye").equals("true")) {
+                    SelectionKey tempSelKey=null;
+                    allClientKeys.remove(selectionKey);
+                    for(String key : clientsKeys.keySet()) {
+                        List<SelectionKey> selectionKeys = clientsKeys.get(key);
+                        for (SelectionKey selKey : selectionKeys) {
+                            if(selectionKey.equals(selKey)){
+                                tempSelKey = selKey;
+//                                selectionKeys.remove(selectionKey);//trzeba usunąć klucz
+                                System.out.println("Zegnam: "+selectionKey);
+                            }
+
+                        }
+                    }
+
+                    socketChannel.close();
+                    socketChannel.socket().close();
+                    System.out.println("Żyję: ");
                 }
             }
             else if(jsonObject.containsKey("topicNews")){
@@ -260,6 +328,7 @@ public class Server {
 
             if(jsonObject.containsKey("msg")) { ///also use for (un)subscribe respone
                 if(jsonObject.get("msg").equals("getTopics")) {
+                    allClientKeys.add(selectionKey);
                     String topicsJson = "{\"topics\":[";
                     int i = 0;
                     int size = topics.size();
