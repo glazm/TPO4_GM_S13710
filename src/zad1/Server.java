@@ -1,5 +1,6 @@
 package zad1;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -17,13 +18,16 @@ import java.util.*;
 
 public class Server {
     private static Map<String,String> clients = new HashMap<String,String>();
+    private static Map<String,List<SelectionKey>> clientsKeys = new HashMap<String,List<SelectionKey>>();
     private static List<String> topics = new ArrayList<>();
+    private static Map<String,String> topicsNews = new HashMap<>();
     public static void main(String[] args) throws IOException {
         new Server();
     }
     Server() throws IOException{
         String host = "localhost";
         int port = 50000;
+//        JSONParser jsonParser = new JSONParser();
 
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.socket().bind(new InetSocketAddress(host,port));
@@ -61,9 +65,48 @@ public class Server {
                     continue;
                 }
                 if(selectionKey.isWritable()){
-                    //SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+//                    publishNews(selectionKey);
+//                    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+//
+//                    if(clients.containsKey("testy")) {
+//                        topicsNews.forEach(
+//                                (key, value) -> {
+////                                System.out.println(key+" news: "+value);
+//
+//
+//                                    try {
+//                                        JSONArray  prepareNews = (JSONArray) jsonParser.parse(clients.get(key));
+//                                        Iterator<String> iter = prepareNews.iterator();
+//                                        while (iter.hasNext()) {
+//                                            String testTmp = iter.next();
+//                                            System.out.println(testTmp + " =? " + selectionKey.toString());
+//                                            if (testTmp.equals(selectionKey.toString())) {
+//                                                System.out.println("Prawda");
+//                                                //                            socketChannel.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+//                                            }
+//                                        }
+//                                    } catch (ParseException e) {
+//                                        e.printStackTrace();
+//                                    }
+
+//                   System.out.println(prepareNews.toString());
+//                    socketChannel.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+//                                }
+//                        );
+//                    }
+//                            }
+
+
+//                    if(!socketChannel.isOpen()){return;}
+//                    socketChannel.write(charset.encode("{\""+key+"\":\""+subTopic+"\"}"));
+//                    topicsNews.forEach(
+//                            (key, value) -> {
+//                                System.out.println(key+" news: "+value);
+//                            }
+//                    );
 
                     continue;
+
                 }
 
             }
@@ -73,6 +116,37 @@ public class Server {
     Charset charset = Charset.forName("UTF-8");
     private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
     private StringBuffer stringBuffer = new StringBuffer();
+
+    public void publishNews(SelectionKey kk)throws IOException{
+//        SocketChannel cli = (SocketChannel) kk.channel();
+//        ByteBuffer buf = (ByteBuffer) kk.attachment();
+//
+//        System.out.println(String.format("Wrinting into the channel %s", cli));
+//        buf.flip();//prepare the buffer
+//        buf.rewind();
+//        topicsNews.forEach(
+//                (key, value) -> {
+//                    System.out.println(key+" news: "+value);
+//                    try {
+//                        cli.write(charset.encode(value));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//        );
+//
+//
+//        if (buf.hasRemaining()) {
+//            //If there is more content remaining, compact the buffer
+//            buf.compact();
+//        } else {
+//            buf.clear();
+//            kk.interestOps(SelectionKey.OP_READ);
+//        }
+    }
+    public void updateTopic(){
+
+    }
 
     public void readRequest(SocketChannel socketChannel, SelectionKey selectionKey) throws IOException {
         if(!socketChannel.isOpen()){return;}
@@ -132,8 +206,39 @@ public class Server {
                 String news =(String) jsonObject.get("news");
                 String topic = (String) jsonObject.get("topicNews");
                 System.out.println("Wiadomości dotyczące "+topic+": "+ news);
-                socketChannel.close();
-                socketChannel.socket().close();
+//                socketChannel.close();
+//                socketChannel.socket().close();
+
+
+//                topicsNews.put("\""+topic+"\"","\""+news+"\"");
+//
+//                topicsNews.forEach(
+//                        (key, value) -> {
+//                            System.out.println(key+" news: "+value);
+//                        }
+//                );
+                if(clientsKeys.containsKey(topic)) {
+                    List<SelectionKey> selectionKeys = clientsKeys.get(topic);
+                    for(SelectionKey selKey:selectionKeys){
+                        SocketChannel spreadNews =(SocketChannel) selKey.channel();
+                        spreadNews.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+                    }
+//                   JSONArray prepareNews = (JSONArray) jsonParser.parse(clients.get(topic));
+//                   Iterator<String> iter = prepareNews.iterator();
+//                    while(iter.hasNext()){
+//                        String testTmp = iter.next();
+//                        System.out.println(testTmp);
+//                        SelectionKey kk =
+//                        SocketChannel spreadNews =
+//                        socketChannel.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+//                        if(testTmp.equals(selectionKey.toString())) {
+//                            System.out.println("Prawda");
+////                            socketChannel.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+//                        }
+//                    }
+//                   System.out.println(prepareNews.toString());
+//                    socketChannel.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+                }
             }
             for(String topic : topics){
                 System.out.println(topic);
@@ -166,10 +271,10 @@ public class Server {
                 if(clients.containsKey(subTopic)) {
                     objects = clients.get(subTopic);
                     objects = objects.replaceAll("]","");
-                    objects = objects.concat(",\""+selectionKey.toString()+"\"]");
+                    objects = objects.concat(",\""+selectionKey+"\"]");
                     clients.put(subTopic, objects);
                 }else{
-                    clients.put(subTopic,"[\""+selectionKey.toString()+"\"]");
+                    clients.put(subTopic,"[\""+selectionKey+"\"]");
                 }
 
                 clients.forEach(
@@ -177,6 +282,39 @@ public class Server {
                             System.out.println(key+" clients: "+value);
                         }
             );
+                /////////////////////////Testy
+                String obj ="";
+                List<SelectionKey> list = new ArrayList<>();
+                if(clientsKeys.containsKey(subTopic)) {
+//                    clientsKeys.forEach(
+//                            (key, value) -> {
+//                                System.out.println(key+" clients: "+value);
+//                            }
+//                    );
+                    list =clientsKeys.get(subTopic);
+                    list.add(selectionKey);
+                    clientsKeys.put(subTopic, list);
+                    System.out.println("Jestem");
+                }else{
+                    list.add(selectionKey);
+                    clientsKeys.put(subTopic,list);
+                }
+
+                clientsKeys.forEach(
+                        (key, value) -> {
+//                            System.out.println(key+" clients: "+value);
+//                            JSONArray msg = (JSONArray) jsonObject.get(key);
+//                            Iterator<String> iterator = msg.iterator();
+//                            while (iterator.hasNext()) {
+                                for(SelectionKey sk : value){
+                                    System.out.println(key+" clients SelectionKey: " +sk);
+                                }
+//                            }
+
+                        }
+                );
+                /////////////////////////Testy
+
                 socketChannel.write(charset.encode("{\"sub\":\""+subTopic+"\"}"));
             }
             if(jsonObject.containsKey("unsubscribe")){
