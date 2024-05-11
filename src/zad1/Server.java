@@ -244,7 +244,7 @@ public class Server {
                         topicsJson = topicsJson.concat("\"" + topicPublished + "\"");
                     }
                 }
-                topicsJson = topicsJson.concat("]}");
+                topicsJson = topicsJson.concat("],\"update\":\"add\"}");
                 System.out.println(topicsJson);
                 if(!allClientKeys.isEmpty()) {
                     for (SelectionKey sk : allClientKeys) {
@@ -275,7 +275,7 @@ public class Server {
                         topicsJson = topicsJson.concat("\"" + topicPublished + "\"");
                     }
                 }
-                topicsJson = topicsJson.concat("]}");
+                topicsJson = topicsJson.concat("],\"update\":\"remove\"}");
                 System.out.println(topicsJson);
                 if(!allClientKeys.isEmpty()) {
                     for (SelectionKey sk : allClientKeys) {

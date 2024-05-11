@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Client {
-    public List<String> myTopicsGui = new ArrayList<>();
+    public static List<String> myTopicsGui = new ArrayList<>();
     public static List<String> myTopics = new ArrayList<>();
     public static List<String> topicsList = new ArrayList<>();
     private static SocketChannel socketChannel = null;
@@ -67,6 +67,7 @@ public class Client {
 
                 charBuffer = charset.decode(byteBuffer);
                 String serverResponse = charBuffer.toString();
+                System.out.println("TEST "+serverResponse+" KONIEC TESTU");
 
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(serverResponse);
                 if(jsonObject.containsKey("topics")){
@@ -77,11 +78,17 @@ public class Client {
                     topicsList.clear();
                     JSONArray topicsArray =(JSONArray) jsonObject.get("topics");
                     Iterator<String> iter = topicsArray.iterator();
+                    String update =(String) jsonObject.get("update");
 //                    int count = 0;
 //                    int size = topicsArray.size();
                     while(iter.hasNext()){
                         String topic = iter.next();
-                        addTopic(topic);
+                        if(update.equals("add")) {
+                            addTopic(topic);
+                        }
+                        else if(update.equals("remove")) {
+                            unsubscribeToTopic(topic);
+                        }
 //                        count++;
 //                        if(size!=count){
 //                            topics = topics.concat(topic+", ");
@@ -129,7 +136,15 @@ public class Client {
             String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
 //            System.out.println(topicJson);
 //            socketChannel.write(charset.encode(topicJson));
+        System.out.println("Moje tematy2: "+myTopics);
+    }
+    public static void removeTopic(String topic) throws IOException {
 
+        topicsList.remove(topic);
+        String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
+//            System.out.println(topicJson);
+//            socketChannel.write(charset.encode(topicJson));
+//        System.out.println("Moje tematy2: "+myTopics);
     }
     public void subscribeToTopic(String topic) throws IOException {
         if(!myTopics.contains(topic)) {
@@ -140,8 +155,9 @@ public class Client {
         }
         System.out.println("Moje tematy: "+myTopics);
     }
-    public void unsubscribeToTopic(String topic) throws IOException {
+    public static void unsubscribeToTopic(String topic) throws IOException {
         if(myTopics.contains(topic)){
+            removeTopic(topic);
             String topicJson = "{\"unsubscribe\":\"" + topic + "\"}\n";
             socketChannel.write(charset.encode(topicJson));
             myTopics.remove(topic);
