@@ -396,7 +396,7 @@ public class Server {
                     System.out.println(topicsJson);
                     socketChannel.write(charset.encode(topicsJson));
                 }
-                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
+//                socketChannel.write(charset.encode(CharBuffer.wrap(stringBuffer)));
             }
             if(jsonObject.containsKey("subscribe")){
                 String subTopic = jsonObject.get("subscribe").toString();

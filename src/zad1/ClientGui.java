@@ -10,8 +10,9 @@ import java.io.IOException;
 public class ClientGui extends JFrame {
     public Client client;
     JComboBox<String> topicL = new JComboBox();
-    JTextArea newsText = new JTextArea(10,10);
-    JLabel subscribedLabel = new JLabel("Subskrybcje: ");
+    JTextArea newsText = new JTextArea(10,50);
+    JTextArea subsText = new JTextArea(10,50);
+
     public ClientGui(Client client){
         this.client = client;
         new  JFrame("Client");
@@ -23,29 +24,39 @@ public class ClientGui extends JFrame {
 
 //        JLabel subscribedLabel = new JLabel("Subskrybcje: ");
 //        info.setBorder(BorderFactory.createTitledBorder("Info"));
+        JLabel subscribedLabel = new JLabel("Subskrybcje: ");
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridy = 0;
         mainPanel.add(subscribedLabel,constraints);
 
-        JButton subscribeButton = new JButton("Subskrybuj");
+
+
+        subsText.setLineWrap(true);
+        subsText.setWrapStyleWord(true);
+        subsText.setEditable(false);
         constraints.gridy = 1;
+        mainPanel.add(new JScrollPane(subsText),constraints);
+
+
+        JButton subscribeButton = new JButton("Subskrybuj");
+        constraints.gridy = 2;
 //        constraints.gridx = 0;
         mainPanel.add(subscribeButton,constraints);
 
         JButton unsubscribeButton = new JButton("UnSubskrybuj");
-        constraints.gridy = 2;
+        constraints.gridy = 3;
 //        constraints.gridx = 1;
         mainPanel.add(unsubscribeButton,constraints);
 
 //        JComboBox<String> topicList = new JComboBox();
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         mainPanel.add(topicL,constraints);
 
 //        JTextArea newsText = new JTextArea(10,10);
         newsText.setLineWrap(true);
         newsText.setWrapStyleWord(true);
         newsText.setEditable(false);
-        constraints.gridy = 4;
+        constraints.gridy = 5;
         mainPanel.add(new JScrollPane(newsText),constraints);
 
 
@@ -58,10 +69,10 @@ public class ClientGui extends JFrame {
                         client.subscribeToTopic(topicL.getSelectedItem().toString());
                         String args = "";
                         for(String s: client.myTopicsGui){
-                            args+=" "+s+" ";
+                            args+=" \""+s+"\" ";
                         }
-                        String result = "Subskrybcje:"+args;
-                        subscribedLabel.setText(result);
+                        String result = args;
+                        subsText.setText(result);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -80,8 +91,8 @@ public class ClientGui extends JFrame {
                         for(String s: client.myTopicsGui){
                             args+=" "+s+" ";
                         }
-                        String result = "Subskrybcje:"+args;
-                        subscribedLabel.setText(result);
+                        String result = args;
+                        subsText.setText(result);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -91,8 +102,9 @@ public class ClientGui extends JFrame {
 
 
         this.add(mainPanel);
+        this.setResizable(false);
         this.pack();
-        this.setSize(500,300);
+        this.setSize(700,500);
         this.setVisible(true);
     }
     public void updateTopics(){
@@ -104,8 +116,8 @@ public class ClientGui extends JFrame {
         for(String s: client.myTopicsGui){
             args+=" "+s+" ";
         }
-        String result = "Subskrybcje:"+args;
-        subscribedLabel.setText(result);
+        String result = args;
+        subsText.setText(result);
     }
     public void publishNews(String subject, String subjectNews){
         newsText.setText("["+subject+" news ]: "+subjectNews);

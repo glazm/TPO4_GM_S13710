@@ -142,7 +142,7 @@ public class PublisherGui extends JFrame{
         });
 
         this.add(mainPanel);
-
+        this.setResizable(false);
         this.pack();
         this.setSize(700,500);
         this.setVisible(true);
