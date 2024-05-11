@@ -75,20 +75,23 @@ public class Client {
 //                    for (String s:topicsList){
 //                        tmp.add(s);
 //                    }
-                    topicsList.clear();
+
                     JSONArray topicsArray =(JSONArray) jsonObject.get("topics");
                     Iterator<String> iter = topicsArray.iterator();
                     String update =(String) jsonObject.get("update");
 //                    int count = 0;
 //                    int size = topicsArray.size();
+                    if(jsonObject.containsKey("update")){
+                    if(update.equals("add")) {
+                        topicsList.clear();
                     while(iter.hasNext()){
                         String topic = iter.next();
-                        if(update.equals("add")) {
+
                             addTopic(topic);
                         }
-                        else if(update.equals("remove")) {
-                            unsubscribeToTopic(topic);
-                        }
+//                        else if(update.equals("remove")) {
+//                            removeTopic(topic);
+//                        }
 //                        count++;
 //                        if(size!=count){
 //                            topics = topics.concat(topic+", ");
@@ -97,12 +100,26 @@ public class Client {
 //                        }
 //                        System.out.println(iter.next());
                     }
+                    }
 //                    if(!topics.isEmpty()) {
                         gui.updateTopics();
 //                        System.out.println("Lista dostępnych tematów: " + topics);
 //                    }else{
 //                        System.out.println("Brak tematów");
 //                    }
+                }
+                if(jsonObject.containsKey("update")){
+                    String update =(String) jsonObject.get("update");
+                    if(update.equals("remove")) {
+                        JSONArray topicsArray =(JSONArray) jsonObject.get("topics");
+                        Iterator<String> iter = topicsArray.iterator();
+                        while(iter.hasNext()){
+                            String topic = iter.next();
+                            removeTopic(topic);
+                        }
+
+                    }
+                    gui.updateTopics();
                 }
                 for(String subject: myTopics){
                     if(jsonObject.containsKey(subject)){
@@ -136,15 +153,18 @@ public class Client {
             String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
 //            System.out.println(topicJson);
 //            socketChannel.write(charset.encode(topicJson));
-        System.out.println("Moje tematy2: "+myTopics);
+//        System.out.println("Moje tematy2: "+myTopics);
     }
     public static void removeTopic(String topic) throws IOException {
 
         topicsList.remove(topic);
+        myTopics.remove(topic);
+        myTopicsGui.remove(topic);
         String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
 //            System.out.println(topicJson);
 //            socketChannel.write(charset.encode(topicJson));
-//        System.out.println("Moje tematy2: "+myTopics);
+        System.out.println("Moje tematy: "+myTopics);
+        System.out.println("Moje tematy2: "+topicsList);
     }
     public void subscribeToTopic(String topic) throws IOException {
         if(!myTopics.contains(topic)) {
@@ -157,7 +177,7 @@ public class Client {
     }
     public static void unsubscribeToTopic(String topic) throws IOException {
         if(myTopics.contains(topic)){
-            removeTopic(topic);
+//            removeTopic(topic);
             String topicJson = "{\"unsubscribe\":\"" + topic + "\"}\n";
             socketChannel.write(charset.encode(topicJson));
             myTopics.remove(topic);

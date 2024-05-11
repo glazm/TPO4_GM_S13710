@@ -11,6 +11,7 @@ public class ClientGui extends JFrame {
     public Client client;
     JComboBox<String> topicL = new JComboBox();
     JTextArea newsText = new JTextArea(10,10);
+    JLabel subscribedLabel = new JLabel("Subskrybcje: ");
     public ClientGui(Client client){
         this.client = client;
         new  JFrame("Client");
@@ -20,7 +21,7 @@ public class ClientGui extends JFrame {
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        JLabel subscribedLabel = new JLabel("Subskrybcje: ");
+//        JLabel subscribedLabel = new JLabel("Subskrybcje: ");
 //        info.setBorder(BorderFactory.createTitledBorder("Info"));
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridy = 0;
@@ -99,6 +100,12 @@ public class ClientGui extends JFrame {
                 client.topicsList.toArray()
 //                publisher.getTopics().toArray()
         ));
+        String args = "";
+        for(String s: client.myTopicsGui){
+            args+=" "+s+" ";
+        }
+        String result = "Subskrybcje:"+args;
+        subscribedLabel.setText(result);
     }
     @Override
     protected void processWindowEvent(WindowEvent e){

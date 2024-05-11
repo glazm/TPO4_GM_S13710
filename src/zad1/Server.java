@@ -265,16 +265,16 @@ public class Server {
                 /////////////////////////////////
                 //Dodawać do nowej listy przy każdym nowym łączeniu selectionKey clientów
                 String topicsJson = "{\"topics\":[";
-                int i = 0;
-                int size = topics.size();
-                for(String topicPublished:topics){
-                    i++;
-                    if(size!=i) {
-                        topicsJson = topicsJson.concat("\"" + topicPublished + "\",");
-                    }else{
-                        topicsJson = topicsJson.concat("\"" + topicPublished + "\"");
-                    }
-                }
+//                int i = 0;
+//                int size = topics.size();
+//                for(String topicPublished:topics){
+//                    i++;
+//                    if(size!=i) {
+//                        topicsJson = topicsJson.concat("\"" + topicPublished + "\",");
+//                    }else{
+                        topicsJson = topicsJson.concat("\"" + topic + "\"");
+//                    }
+//                }
                 topicsJson = topicsJson.concat("],\"update\":\"remove\"}");
                 System.out.println(topicsJson);
                 if(!allClientKeys.isEmpty()) {
@@ -392,7 +392,7 @@ public class Server {
                             topicsJson = topicsJson.concat("\"" + topic + "\"");
                         }
                     }
-                    topicsJson = topicsJson.concat("]}");
+                    topicsJson = topicsJson.concat("],\"update\":\"add\"}");
                     System.out.println(topicsJson);
                     socketChannel.write(charset.encode(topicsJson));
                 }
@@ -401,20 +401,20 @@ public class Server {
             if(jsonObject.containsKey("subscribe")){
                 String subTopic = jsonObject.get("subscribe").toString();
                 String objects ="";
-                if(clients.containsKey(subTopic)) {
-                    objects = clients.get(subTopic);
-                    objects = objects.replaceAll("]","");
-                    objects = objects.concat(",\""+selectionKey+"\"]");
-                    clients.put(subTopic, objects);
-                }else{
-                    clients.put(subTopic,"[\""+selectionKey+"\"]");
-                }
-
-                clients.forEach(
-                        (key, value) -> {
-                            System.out.println(key+" clients: "+value);
-                        }
-            );
+//                if(clients.containsKey(subTopic)) {
+//                    objects = clients.get(subTopic);
+//                    objects = objects.replaceAll("]","");
+//                    objects = objects.concat(",\""+selectionKey+"\"]");
+//                    clients.put(subTopic, objects);
+//                }else{
+//                    clients.put(subTopic,"[\""+selectionKey+"\"]");
+//                }
+//
+//                clients.forEach(
+//                        (key, value) -> {
+//                            System.out.println(key+" clients: "+value);
+//                        }
+//            );
                 /////////////////////////Testy
                 String obj ="";
                 List<SelectionKey> list = new ArrayList<>();
