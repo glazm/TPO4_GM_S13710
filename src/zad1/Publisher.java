@@ -1,10 +1,7 @@
 package zad1;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -20,7 +17,6 @@ public class Publisher {
     public static void main(String[] args) throws IOException {
         new Publisher();
 
-//        SocketChannel socketChannel = null;
         String server = "localhost";
         int serverPort = 50000;
 
@@ -37,18 +33,6 @@ public class Publisher {
         }
         System.out.println("Połączono");
 
-//        Charset charset = Charset.forName("UTF-8");
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        CharBuffer charBuffer = null;
-
-//        do {
-//        socketChannel.write(charset.encode("Cześć jestem Adminem\n"));
-//            addTopic("Sport");
-//            addTopic("Sport", socketChannel, charset);
-//        Polityka Sport Plotki Muzyka
-//        removeTopic("Muzyka", socketChannel, charset);
-//        topicNews("Muzyka","Koncert zepsołu w Warszawie", socketChannel, charset);
-//        }while(true);
     }
 
     public void closingPublisher(){
@@ -58,22 +42,18 @@ public class Publisher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
     public List<String> getTopics(){
         return topics;
     }
     public boolean addTopic(String topic) throws IOException {
         if(topics.contains(topic)){
-//            System.out.println("Taki temat już istnieje");
             return false;
         }else {
             topics.add(topic);
             String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
-//            System.out.println(topicJson);
             socketChannel.write(charset.encode(topicJson));
             return true;
-
         }
     }
 
@@ -86,7 +66,6 @@ public class Publisher {
         String topicJson = "{\"removeAllTopics\":\"true\"}\n";
         socketChannel.write(charset.encode(topicJson));
     }
-
 
     public void topicNews(String topic, String news) throws IOException {
         String newsJson = "{\"topicNews\":\"" + topic + "\",\"news\":\""+news+"\"}\n";
