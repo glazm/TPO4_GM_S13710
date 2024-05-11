@@ -21,15 +21,11 @@ public class ClientGui extends JFrame {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-
-//        JLabel subscribedLabel = new JLabel("Subskrybcje: ");
-//        info.setBorder(BorderFactory.createTitledBorder("Info"));
+        
         JLabel subscribedLabel = new JLabel("Subskrybcje: ");
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridy = 0;
         mainPanel.add(subscribedLabel,constraints);
-
-
 
         subsText.setLineWrap(true);
         subsText.setWrapStyleWord(true);
@@ -37,33 +33,28 @@ public class ClientGui extends JFrame {
         constraints.gridy = 1;
         mainPanel.add(new JScrollPane(subsText),constraints);
 
-
         JButton subscribeButton = new JButton("Subskrybuj");
         constraints.gridy = 2;
-//        constraints.gridx = 0;
+
         mainPanel.add(subscribeButton,constraints);
 
         JButton unsubscribeButton = new JButton("UnSubskrybuj");
         constraints.gridy = 3;
-//        constraints.gridx = 1;
+
         mainPanel.add(unsubscribeButton,constraints);
 
-//        JComboBox<String> topicList = new JComboBox();
         constraints.gridy = 4;
         mainPanel.add(topicL,constraints);
 
-//        JTextArea newsText = new JTextArea(10,10);
         newsText.setLineWrap(true);
         newsText.setWrapStyleWord(true);
         newsText.setEditable(false);
         constraints.gridy = 5;
         mainPanel.add(new JScrollPane(newsText),constraints);
 
-
         subscribeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Sub");
                 if(topicL.getSelectedItem()!=null){
                     try {
                         client.subscribeToTopic(topicL.getSelectedItem().toString());
@@ -83,7 +74,6 @@ public class ClientGui extends JFrame {
         unsubscribeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("unsub");
                 if(topicL.getSelectedItem()!=null){
                     try {
                         client.unsubscribeToTopic(topicL.getSelectedItem().toString());
@@ -100,7 +90,6 @@ public class ClientGui extends JFrame {
             }
         });
 
-
         this.add(mainPanel);
         this.setResizable(false);
         this.pack();
@@ -110,7 +99,7 @@ public class ClientGui extends JFrame {
     public void updateTopics(){
         topicL.setModel(new DefaultComboBoxModel(
                 client.topicsList.toArray()
-//                publisher.getTopics().toArray()
+
         ));
         String args = "";
         for(String s: client.myTopicsGui){
@@ -126,7 +115,6 @@ public class ClientGui extends JFrame {
     protected void processWindowEvent(WindowEvent e){
         super.processWindowEvent(e);
         if(e.getID() == WindowEvent.WINDOW_CLOSING){
-//wywołanie metody client.removeFromServer()
 
             try {
                 client.removeFromServer();
@@ -136,5 +124,5 @@ public class ClientGui extends JFrame {
             }
             System.exit(0);
         }
-    };
+    }
 }

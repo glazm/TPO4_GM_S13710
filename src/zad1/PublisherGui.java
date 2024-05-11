@@ -44,7 +44,6 @@ public class PublisherGui extends JFrame{
         JPanel removeTopicPanel = new JPanel();
         removeTopicPanel.setLayout(new GridBagLayout());
 
-
         JComboBox<String> topicList = new JComboBox();
         Border topicListBorder = BorderFactory.createTitledBorder("Tematy");
         topicList.setBorder(topicListBorder);
@@ -75,7 +74,6 @@ public class PublisherGui extends JFrame{
         newsText.setLineWrap(true);
         newsText.setWrapStyleWord(true);
 
-
         newsPanel.add(new JScrollPane(newsText));
 
         JButton newsButton = new JButton("News");
@@ -85,7 +83,6 @@ public class PublisherGui extends JFrame{
         constraints.gridy = 2;
         constraints.gridx = 0;
         mainPanel.add(newsPanel,constraints);
-
 
         addTopicButton.addActionListener(new ActionListener() {
             @Override
@@ -110,7 +107,7 @@ public class PublisherGui extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(topicList.getSelectedItem()!=null) {
-                    System.out.println(topicList.getSelectedItem().toString());
+
                     try {
                         publisher.removeTopic(topicList.getSelectedItem().toString());
                         topicList.setModel(new DefaultComboBoxModel(
@@ -128,8 +125,7 @@ public class PublisherGui extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 if(!newsText.getText().isEmpty()) {
                     if(topicList.getSelectedItem()!=null) {
-                        System.out.println(topicList.getSelectedItem().toString()
-                                +": "+newsText.getText());
+
                         try {
                             publisher.topicNews(topicList.getSelectedItem().toString()
                                     ,newsText.getText());
@@ -162,5 +158,5 @@ public class PublisherGui extends JFrame{
             publisher.closingPublisher();
             System.exit(0);
         }
-    };
+    }
 }
