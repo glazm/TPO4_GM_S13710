@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Client {
+    public List<String> myTopicsGui = new ArrayList<>();
     public static List<String> myTopics = new ArrayList<>();
     public static List<String> topicsList = new ArrayList<>();
     private static SocketChannel socketChannel = null;
@@ -135,6 +136,7 @@ public class Client {
             String topicJson = "{\"subscribe\":\"" + topic + "\"}\n";
             socketChannel.write(charset.encode(topicJson));
             myTopics.add(topic);
+            myTopicsGui.add(topic);
         }
         System.out.println("Moje tematy: "+myTopics);
     }
@@ -143,6 +145,7 @@ public class Client {
             String topicJson = "{\"unsubscribe\":\"" + topic + "\"}\n";
             socketChannel.write(charset.encode(topicJson));
             myTopics.remove(topic);
+            myTopicsGui.remove(topic);
         }
         System.out.println("Moje tematy: "+myTopics);
     }

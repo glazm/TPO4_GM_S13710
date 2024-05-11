@@ -162,8 +162,42 @@ public class Server {
     }
 
     public void readRequest(SocketChannel socketChannel, SelectionKey selectionKey) throws IOException {
-        if(!socketChannel.isOpen()){return;}
-            System.out.println("To jest nowe czytanie: "+selectionKey);
+        if (!socketChannel.isOpen()) {
+            return;
+        }
+        System.out.println("To jest nowe czytanie: " + selectionKey);
+//        boolean flag = true;
+//        if (flag){
+        /////////////////////////////////Póżniej
+//            if (!allClientKeys.isEmpty()) {
+//                for (SelectionKey kkk : allClientKeys) {
+//                    System.out.println(kkk);
+//                    if (!kkk.equals(selectionKey)) {
+//                        if (!clientsKeys.isEmpty()) {
+//                            for (String key : clientsKeys.keySet()) {
+//                                List<SelectionKey> selectionKeys = clientsKeys.get(key);
+//                                for (SelectionKey selKey : selectionKeys) {
+//                                    if (!allClientKeys.contains(selKey)) {
+//                                        System.out.println(allClientKeys);
+//                                        List<SelectionKey> tmpList = selectionKeys;
+//                                        System.out.println("Stara lista: " + key + " - " + tmpList);
+//                                        tmpList.remove(selKey);
+//                                        System.out.println("Nowa lista: " + key + " - " + tmpList);
+//                                        clientsKeys.put(key, tmpList);
+//                                        selKey.selector().close();
+////                                        flag = false;
+//                                    }
+//
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//
+//                }
+//            }
+        /////////////////////////////////Póżniej
+//        }
         stringBuffer.setLength(0);
         byteBuffer.clear();
 
@@ -265,21 +299,37 @@ public class Server {
                 if(jsonObject.get("bye").equals("true")) {
                     SelectionKey tempSelKey=null;
                     allClientKeys.remove(selectionKey);
+                    /////////////////////////////////Póżniej
                     for(String key : clientsKeys.keySet()) {
-                        List<SelectionKey> selectionKeys = clientsKeys.get(key);
-                        for (SelectionKey selKey : selectionKeys) {
-                            if(selectionKey.equals(selKey)){
-                                tempSelKey = selKey;
-//                                selectionKeys.remove(selectionKey);//trzeba usunąć klucz
-                                System.out.println("Zegnam: "+selectionKey);
-                            }
-
-                        }
+//                        List<SelectionKey> selectionKeys = clientsKeys.get(key);
+//                        for (SelectionKey selKey : selectionKeys) {
+//                            if(selectionKey.equals(selKey)){
+//                                tempSelKey = selKey;
+////                                selectionKeys.remove(selectionKey);//trzeba usunąć klucz
+//                                System.out.println("Zegnam: "+selectionKey);
+//                            }
+//
+//                        }
+                        String obj ="";
+                        List<SelectionKey> list = new ArrayList<>();
+//                        if(clientsKeys.containsKey(key)) {
+//                    clientsKeys.forEach(
+//                            (key, value) -> {
+//                                System.out.println(key+" clients: "+value);
+//                            }
+//                    );
+                            list =clientsKeys.get(key);
+                            list.remove(selectionKey);
+                            clientsKeys.put(key, list);
+//                    System.out.println("Jestem");
+//                        }
                     }
+
+                    /////////////////////////////////Póżniej
 
                     socketChannel.close();
                     socketChannel.socket().close();
-                    System.out.println("Żyję: ");
+                    System.out.println("Żyję: "+ clientsKeys.keySet()+" "+allClientKeys);
                 }
             }
             else if(jsonObject.containsKey("topicNews")){
@@ -300,8 +350,10 @@ public class Server {
                 if(clientsKeys.containsKey(topic)) {
                     List<SelectionKey> selectionKeys = clientsKeys.get(topic);
                     for(SelectionKey selKey:selectionKeys){
-                        SocketChannel spreadNews =(SocketChannel) selKey.channel();
-                        spreadNews.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+                        if(selKey.selector().isOpen()) {
+                            SocketChannel spreadNews = (SocketChannel) selKey.channel();
+                            spreadNews.write(charset.encode("{\"" + topic + "\":\"" + news + "\"}"));
+                        }
                     }
 //                   JSONArray prepareNews = (JSONArray) jsonParser.parse(clients.get(topic));
 //                   Iterator<String> iter = prepareNews.iterator();

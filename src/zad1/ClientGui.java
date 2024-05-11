@@ -55,6 +55,12 @@ public class ClientGui extends JFrame {
                 if(topicL.getSelectedItem()!=null){
                     try {
                         client.subscribeToTopic(topicL.getSelectedItem().toString());
+                        String args = "";
+                        for(String s: client.myTopicsGui){
+                            args+=" "+s+" ";
+                        }
+                        String result = "Subskrybcje:"+args;
+                        subscribedLabel.setText(result);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
