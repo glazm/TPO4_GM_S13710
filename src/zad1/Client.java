@@ -28,9 +28,7 @@ public class Client {
     }
     public static void main(String[] args) throws IOException, ParseException {
         new Client();
-//        String topics = "";
-        //When Gui is ready add subscribed topics list, changes with responses from server
-//        SocketChannel socketChannel = null;
+
         String server = "localhost";
         int serverPort = 50000;
         JSONParser jsonParser = new JSONParser();
@@ -46,15 +44,12 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Połączono");
 
         Charset charset = Charset.forName("UTF-8");
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         CharBuffer charBuffer = null;
 
         socketChannel.write(charset.encode("{\"msg\":\"getTopics\"}\n"));
-
-        int i =0;
 
         while(flag){
             byteBuffer.clear();
@@ -67,46 +62,24 @@ public class Client {
 
                 charBuffer = charset.decode(byteBuffer);
                 String serverResponse = charBuffer.toString();
-                System.out.println("TEST "+serverResponse+" KONIEC TESTU");
 
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(serverResponse);
                 if(jsonObject.containsKey("topics")){
-//                    List<String> tmp = new ArrayList<>();
-//                    for (String s:topicsList){
-//                        tmp.add(s);
-//                    }
 
                     JSONArray topicsArray =(JSONArray) jsonObject.get("topics");
                     Iterator<String> iter = topicsArray.iterator();
                     String update =(String) jsonObject.get("update");
-//                    int count = 0;
-//                    int size = topicsArray.size();
-                    if(jsonObject.containsKey("update")){
-                    if(update.equals("add")) {
-                        topicsList.clear();
-                    while(iter.hasNext()){
-                        String topic = iter.next();
 
-                            addTopic(topic);
+                    if(jsonObject.containsKey("update")){
+                        if(update.equals("add")) {
+                            topicsList.clear();
+                            while(iter.hasNext()){
+                                String topic = iter.next();
+                                addTopic(topic);
+                            }
                         }
-//                        else if(update.equals("remove")) {
-//                            removeTopic(topic);
-//                        }
-//                        count++;
-//                        if(size!=count){
-//                            topics = topics.concat(topic+", ");
-//                        }else {
-//                            topics = topics.concat(topic);
-//                        }
-//                        System.out.println(iter.next());
                     }
-                    }
-//                    if(!topics.isEmpty()) {
-                        gui.updateTopics();
-//                        System.out.println("Lista dostępnych tematów: " + topics);
-//                    }else{
-//                        System.out.println("Brak tematów");
-//                    }
+                    gui.updateTopics();
                 }
                 if(jsonObject.containsKey("update")){
                     String update =(String) jsonObject.get("update");
@@ -117,7 +90,6 @@ public class Client {
                             String topic = iter.next();
                             removeTopic(topic);
                         }
-
                     }
                     gui.updateTopics();
                 }
@@ -127,44 +99,20 @@ public class Client {
                         gui.publishNews(subject, subjectNews);
                     }
                 }
-//                if(jsonObject.containsKey("sub")){
-//
-//                }
 
-                System.out.println("Server: "+serverResponse);
                 charBuffer.clear();
-
             }
-            if(i ==0) {
-                System.out.println("stało się");
-                i++;
-//                socketChannel.write(charset.encode("{\"msg\":\"hi2\"}\n"));
-//                subscribeToTopic("Sport");
-//                subscribeToTopic("Sport",socketChannel, charset);
-//                unsubscribeToTopic("Sport",socketChannel, charset);
-            }
-
         }
-
     }
-    public static void addTopic(String topic) throws IOException {
-
+    public static void addTopic(String topic) {
         topicsList.add(topic);
-            String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
-//            System.out.println(topicJson);
-//            socketChannel.write(charset.encode(topicJson));
-//        System.out.println("Moje tematy2: "+myTopics);
-    }
-    public static void removeTopic(String topic) throws IOException {
 
+    }
+    public static void removeTopic(String topic) {
         topicsList.remove(topic);
         myTopics.remove(topic);
         myTopicsGui.remove(topic);
-        String topicJson = "{\"addTopic\":\"" + topic + "\"}\n";
-//            System.out.println(topicJson);
-//            socketChannel.write(charset.encode(topicJson));
-        System.out.println("Moje tematy: "+myTopics);
-        System.out.println("Moje tematy2: "+topicsList);
+
     }
     public void subscribeToTopic(String topic) throws IOException {
         if(!myTopics.contains(topic)) {
@@ -173,17 +121,15 @@ public class Client {
             myTopics.add(topic);
             myTopicsGui.add(topic);
         }
-        System.out.println("Moje tematy: "+myTopics);
     }
     public static void unsubscribeToTopic(String topic) throws IOException {
         if(myTopics.contains(topic)){
-//            removeTopic(topic);
+
             String topicJson = "{\"unsubscribe\":\"" + topic + "\"}\n";
             socketChannel.write(charset.encode(topicJson));
             myTopics.remove(topic);
             myTopicsGui.remove(topic);
         }
-        System.out.println("Moje tematy: "+myTopics);
     }
     public void removeFromServer() throws IOException {
         String json = "{\"bye\":\"true\"}\n";
@@ -192,9 +138,7 @@ public class Client {
     }
     public void closingClient() throws IOException {
         flag=false;
-            socketChannel.close();
-            socketChannel.socket().close();
-
+        socketChannel.close();
+        socketChannel.socket().close();
     }
-
 }

@@ -14,7 +14,7 @@ public class Publisher {
     public Publisher(){
        new PublisherGui(this);
     }
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new Publisher();
 
         String server = "localhost";
@@ -31,7 +31,6 @@ public class Publisher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Połączono");
 
     }
 

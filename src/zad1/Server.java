@@ -75,7 +75,7 @@ public class Server {
     private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
     private StringBuffer stringBuffer = new StringBuffer();
 
-    public void readRequest(SocketChannel socketChannel, SelectionKey selectionKey) throws IOException {
+    public void readRequest(SocketChannel socketChannel, SelectionKey selectionKey) {
         if (!socketChannel.isOpen()) {
             return;
         }
