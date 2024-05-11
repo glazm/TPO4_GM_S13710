@@ -107,6 +107,9 @@ public class ClientGui extends JFrame {
         String result = "Subskrybcje:"+args;
         subscribedLabel.setText(result);
     }
+    public void publishNews(String subject, String subjectNews){
+        newsText.setText("["+subject+" news ]: "+subjectNews);
+    }
     @Override
     protected void processWindowEvent(WindowEvent e){
         super.processWindowEvent(e);

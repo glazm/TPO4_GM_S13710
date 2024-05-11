@@ -86,10 +86,10 @@ public class PublisherGui extends JFrame{
         constraints.gridy = 2;
         mainPanel.add(newsPanel,constraints);
 
-        JLabel info = new JLabel("Tymczasowy tekst");
-//        info.setBorder(BorderFactory.createTitledBorder("Info"));
-        constraints.gridy = 3;
-        mainPanel.add(info,constraints);
+//        JLabel info = new JLabel("Tymczasowy tekst");
+////        info.setBorder(BorderFactory.createTitledBorder("Info"));
+//        constraints.gridy = 3;
+//        mainPanel.add(info,constraints);
 
 
 //        JTextField topic = new JTextField();

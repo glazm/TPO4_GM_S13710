@@ -65,7 +65,7 @@ public class Publisher {
     }
     public boolean addTopic(String topic) throws IOException {
         if(topics.contains(topic)){
-            System.out.println("Taki temat już istnieje");
+//            System.out.println("Taki temat już istnieje");
             return false;
         }else {
             topics.add(topic);

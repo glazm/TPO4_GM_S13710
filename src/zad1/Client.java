@@ -124,7 +124,7 @@ public class Client {
                 for(String subject: myTopics){
                     if(jsonObject.containsKey(subject)){
                         String subjectNews =(String) jsonObject.get(subject);
-                        gui.newsText.setText("["+subject+" news ]: "+subjectNews);
+                        gui.publishNews(subject, subjectNews);
                     }
                 }
 //                if(jsonObject.containsKey("sub")){
